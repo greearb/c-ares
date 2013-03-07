@@ -249,7 +249,7 @@ int ares_set_servers_ports(ares_channel channel,
 static int set_servers_csv(ares_channel channel,
                            const char* _csv, int use_port)
 {
-  size_t i;
+  size_t i = 0;
   char* csv = NULL;
   char* ptr;
   char* start_host;
@@ -264,7 +264,8 @@ static int set_servers_csv(ares_channel channel,
   if (!channel)
     return ARES_ENODATA;
 
-  i = strlen(_csv);
+  if (_csv)
+    i = strlen(_csv);
   if (i == 0)
      return ARES_SUCCESS; /* blank all servers */
 
