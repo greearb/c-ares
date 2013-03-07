@@ -574,7 +574,10 @@ void ares_set_local_ip6(ares_channel_t *channel, const unsigned char *local_ip6)
     return;
   }
   ares_channel_lock(channel);
-  memcpy(&channel->local_ip6, local_ip6, sizeof(channel->local_ip6));
+  if(local_ip6)
+    memcpy(&channel->local_ip6, local_ip6, sizeof(channel->local_ip6));
+  else
+    memset(&channel->local_ip6, 0, sizeof(channel->local_ip6));
   ares_channel_unlock(channel);
 }
 
@@ -586,9 +589,13 @@ void ares_set_local_dev(ares_channel_t *channel, const char *local_dev_name)
   }
 
   ares_channel_lock(channel);
-  ares_strcpy(channel->local_dev_name, local_dev_name,
-              sizeof(channel->local_dev_name));
-  channel->local_dev_name[sizeof(channel->local_dev_name) - 1] = 0;
+  if(local_dev_name) {
+    ares_strcpy(channel->local_dev_name, local_dev_name,
+                sizeof(channel->local_dev_name));
+    channel->local_dev_name[sizeof(channel->local_dev_name) - 1] = 0;
+  } else {
+    channel->local_dev_name[0] = 0;
+  }
   ares_channel_unlock(channel);
 }
 
