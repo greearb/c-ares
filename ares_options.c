@@ -136,7 +136,7 @@ int ares_set_servers(ares_channel channel,
 int ares_set_servers_csv(ares_channel channel,
                          const char* _csv)
 {
-  size_t i;
+  size_t i = 0;
   char* csv = NULL;
   char* ptr;
   char* start_host;
@@ -153,7 +153,8 @@ int ares_set_servers_csv(ares_channel channel,
 
   ares__destroy_servers_state(channel);
 
-  i = strlen(_csv);
+  if (_csv)
+    i = strlen(_csv);
   if (i == 0)
      return ARES_SUCCESS; /* blank all servers */
 
