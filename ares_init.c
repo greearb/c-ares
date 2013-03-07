@@ -1952,16 +1952,24 @@ void ares_set_local_ip4(ares_channel channel, unsigned int local_ip)
 void ares_set_local_ip6(ares_channel channel,
                         const unsigned char* local_ip6)
 {
-  memcpy(&channel->local_ip6, local_ip6, sizeof(channel->local_ip6));
+  if(local_ip6)
+    memcpy(&channel->local_ip6, local_ip6, sizeof(channel->local_ip6));
+  else
+    memset(&channel->local_ip6, 0, sizeof(channel->local_ip6));
 }
 
 /* local_dev_name should be null terminated. */
 void ares_set_local_dev(ares_channel channel,
                         const char* local_dev_name)
 {
-  strncpy(channel->local_dev_name, local_dev_name,
-          sizeof(channel->local_dev_name));
-  channel->local_dev_name[sizeof(channel->local_dev_name) - 1] = 0;
+  if(local_dev_name) {
+    strncpy(channel->local_dev_name, local_dev_name,
+            sizeof(channel->local_dev_name));
+    channel->local_dev_name[sizeof(channel->local_dev_name) - 1] = 0;
+  }
+  else {
+    channel->local_dev_name[0] = 0;
+  }
 }
 
 
