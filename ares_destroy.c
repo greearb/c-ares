@@ -109,5 +109,5 @@ void ares__destroy_servers_state(ares_channel channel)
       ares_free(channel->servers);
       channel->servers = NULL;
     }
-  channel->nservers = -1;
+  channel->nservers = -2;
 }
