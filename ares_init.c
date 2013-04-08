@@ -442,7 +442,7 @@ static int init_by_options(ares_channel channel,
     channel->ednspsz = options->ednspsz;
 
   /* Copy the IPv4 servers, if given. */
-  if ((optmask & ARES_OPT_SERVERS) && channel->nservers == -1)
+  if ((optmask & ARES_OPT_SERVERS) && channel->nservers < 0)
     {
       /* Avoid zero size allocations at any cost */
       if (options->nservers > 0)
@@ -1176,7 +1176,7 @@ static int init_by_resolv_conf(ares_channel channel)
         else if ((p = try_config(line, "search", ';')) && update_domains)
           status = set_search(channel, p);
         else if ((p = try_config(line, "nameserver", ';')) &&
-                 channel->nservers == -1)
+                 channel->nservers < 0)
           status = config_nameserver(&servers, &nservers, p);
         else if ((p = try_config(line, "sortlist", ';')) &&
                  channel->nsort == -1)
@@ -1353,7 +1353,7 @@ static int init_by_defaults(ares_channel channel)
   if (channel->ednspsz == -1)
     channel->ednspsz = EDNSPACKETSZ;
 
-  if (channel->nservers == -1) {
+  if (channel->nservers < 0) {
     /* If nobody specified servers, try a local named. */
     channel->servers = malloc(sizeof(struct server_state));
     if (!channel->servers) {
