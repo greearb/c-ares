@@ -129,6 +129,9 @@ extern "C" {
 
 /* More error codes */
 #define ARES_ECANCELLED         24          /* introduced in 1.7.0 */
+#define ARES_ENOSERVERS         25          /* No servers configured */
+/* NOTE:  Add to ares_strerror.c if you add more error numbers. */
+
 
 /* Flag values */
 #define ARES_FLAG_USEVC         (1 << 0)

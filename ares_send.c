@@ -46,6 +46,13 @@ void ares_send(ares_channel channel, const unsigned char *qbuf, int qlen,
       return;
     }
 
+  if (channel->nservers <= 0) {
+    DEBUGF(printf("%s:%i nservers: %i is <= 0\n",
+                  __FILE__, __LINE__, channel->nservers));
+    callback(arg, ARES_ENOSERVERS, 0, NULL, 0);
+    return;
+  }
+
   /* Allocate space for query and allocated fields. */
   query = malloc(sizeof(struct query));
   if (!query) {
