@@ -254,6 +254,7 @@ int ares__get_hostent(FILE *fp, int family, struct hostent **host)
             }
           free(hostent);
         }
+      DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
       return ARES_ENOMEM;
     }
 

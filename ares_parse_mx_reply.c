@@ -113,11 +113,11 @@ ares_parse_mx_reply (const unsigned char *abuf, int alen,
 
           /* Allocate storage for this MX answer appending it to the list */
           mx_curr = ares_malloc_data(ARES_DATATYPE_MX_REPLY);
-          if (!mx_curr)
-            {
-              status = ARES_ENOMEM;
-              break;
-            }
+          if (!mx_curr) {
+            DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+            status = ARES_ENOMEM;
+            break;
+          }
           if (mx_last)
             {
               mx_last->next = mx_curr;

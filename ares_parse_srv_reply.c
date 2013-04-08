@@ -118,11 +118,11 @@ ares_parse_srv_reply (const unsigned char *abuf, int alen,
 
           /* Allocate storage for this SRV answer appending it to the list */
           srv_curr = ares_malloc_data(ARES_DATATYPE_SRV_REPLY);
-          if (!srv_curr)
-            {
-              status = ARES_ENOMEM;
-              break;
-            }
+          if (!srv_curr) {
+            DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+            status = ARES_ENOMEM;
+            break;
+          }
           if (srv_last)
             {
               srv_last->next = srv_curr;

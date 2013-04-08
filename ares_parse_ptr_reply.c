@@ -81,11 +81,11 @@ int ares_parse_ptr_reply(const unsigned char *abuf, int alen, const void *addr,
   /* Examine each answer resource record (RR) in turn. */
   hostname = NULL;
   aliases = malloc(alias_alloc * sizeof(char *));
-  if (!aliases)
-    {
-      free(ptrname);
-      return ARES_ENOMEM;
-    }
+  if (!aliases) {
+    free(ptrname);
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+    return ARES_ENOMEM;
+  }
   for (i = 0; i < (int)ancount; i++)
     {
       /* Decode the RR up to the data field. */
@@ -119,12 +119,12 @@ int ares_parse_ptr_reply(const unsigned char *abuf, int alen, const void *addr,
             free(hostname);
           hostname = rr_data;
           aliases[aliascnt] = malloc((strlen(rr_data)+1) * sizeof(char));
-          if (!aliases[aliascnt])
-            {
-              free(rr_name);
-              status = ARES_ENOMEM;
-              break;
-            }
+          if (!aliases[aliascnt]) {
+            free(rr_name);
+            DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+            status = ARES_ENOMEM;
+            break;
+          }
           strncpy(aliases[aliascnt], rr_data, strlen(rr_data)+1);
           aliascnt++;
           if (aliascnt >= alias_alloc) {
@@ -133,6 +133,7 @@ int ares_parse_ptr_reply(const unsigned char *abuf, int alen, const void *addr,
             ptr = realloc(aliases, alias_alloc * sizeof(char *));
             if(!ptr) {
               free(rr_name);
+              DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
               status = ARES_ENOMEM;
               break;
             }
@@ -200,6 +201,7 @@ int ares_parse_ptr_reply(const unsigned char *abuf, int alen, const void *addr,
             }
           free(hostent);
         }
+      DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
       status = ARES_ENOMEM;
     }
   for (i=0 ; i<aliascnt ; i++)

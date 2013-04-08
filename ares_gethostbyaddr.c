@@ -80,11 +80,11 @@ void ares_gethostbyaddr(ares_channel channel, const void *addr, int addrlen,
     }
 
   aquery = malloc(sizeof(struct addr_query));
-  if (!aquery)
-    {
-      callback(arg, ARES_ENOMEM, 0, NULL);
-      return;
-    }
+  if (!aquery) {
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+    callback(arg, ARES_ENOMEM, 0, NULL);
+    return;
+  }
   aquery->channel = channel;
   if (family == AF_INET)
     memcpy(&aquery->addr.addrV4, addr, sizeof(aquery->addr.addrV4));

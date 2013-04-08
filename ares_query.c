@@ -130,12 +130,12 @@ void ares_query(ares_channel channel, const char *name, int dnsclass,
 
   /* Allocate and fill in the query structure. */
   qquery = malloc(sizeof(struct qquery));
-  if (!qquery)
-    {
-      ares_free_string(qbuf);
-      callback(arg, ARES_ENOMEM, 0, NULL, 0);
-      return;
-    }
+  if (!qquery) {
+    ares_free_string(qbuf);
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+    callback(arg, ARES_ENOMEM, 0, NULL, 0);
+    return;
+  }
   qquery->callback = callback;
   qquery->arg = arg;
 

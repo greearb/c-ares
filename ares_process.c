@@ -782,11 +782,11 @@ void ares__send_query(ares_channel channel, struct query *query,
             }
         }
       sendreq = calloc(1, sizeof(struct send_request));
-      if (!sendreq)
-        {
+      if (!sendreq) {
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
         end_query(channel, query, ARES_ENOMEM, NULL, 0);
-          return;
-        }
+        return;
+      }
       /* To make the common case fast, we avoid copies by using the query's
        * tcpbuf for as long as the query is alive. In the rare case where the
        * query ends while it's queued for transmission, then we give the

@@ -83,6 +83,7 @@ int ares_parse_ns_reply( const unsigned char* abuf, int alen,
   if ( !nameservers )
   {
     free( hostname );
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
     return ARES_ENOMEM;
   }
   nameservers_num = 0;
@@ -123,6 +124,7 @@ int ares_parse_ns_reply( const unsigned char* abuf, int alen,
       {
         free(rr_name);
         free(rr_data);
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
         status=ARES_ENOMEM;
         break;
       }
@@ -167,6 +169,7 @@ int ares_parse_ns_reply( const unsigned char* abuf, int alen,
       }
       free( hostent );
     }
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
     status = ARES_ENOMEM;
   }
   for ( i = 0; i < nameservers_num; i++ )

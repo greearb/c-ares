@@ -100,17 +100,18 @@ void ares_gethostbyname(ares_channel channel, const char *name, int family,
 
   /* Allocate and fill in the host query structure. */
   hquery = malloc(sizeof(struct host_query));
-  if (!hquery)
-    {
-      callback(arg, ARES_ENOMEM, 0, NULL);
-      return;
-    }
+  if (!hquery) {
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+    callback(arg, ARES_ENOMEM, 0, NULL);
+    return;
+  }
   hquery->channel = channel;
   hquery->name = strdup(name);
   hquery->want_family = family;
   hquery->sent_family = -1; /* nothing is sent yet */
   if (!hquery->name) {
     free(hquery);
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
     callback(arg, ARES_ENOMEM, 0, NULL);
     return;
   }
@@ -285,11 +286,11 @@ static int fake_hostent(const char *name, int family,
     }
   /* Duplicate the name, to avoid a constness violation. */
   hostent.h_name = strdup(name);
-  if (!hostent.h_name)
-    {
-      callback(arg, ARES_ENOMEM, 0, NULL);
-      return 1;
-    }
+  if (!hostent.h_name) {
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+    callback(arg, ARES_ENOMEM, 0, NULL);
+    return 1;
+  }
 
   /* Fill in the rest of the host structure and terminate the query. */
   addrs[1] = NULL;

@@ -75,8 +75,10 @@ int ares_expand_name(const unsigned char *encoded, const unsigned char *abuf,
     return ARES_EBADNAME;
 
   *s = malloc(nlen.uns + 1);
-  if (!*s)
+  if (!*s) {
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
     return ARES_ENOMEM;
+  }
   q = *s;
 
   if (nlen.uns == 0) {

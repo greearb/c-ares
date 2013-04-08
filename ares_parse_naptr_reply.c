@@ -113,11 +113,11 @@ ares_parse_naptr_reply (const unsigned char *abuf, int alen,
 
           /* Allocate storage for this NAPTR answer appending it to the list */
           naptr_curr = ares_malloc_data(ARES_DATATYPE_NAPTR_REPLY);
-          if (!naptr_curr)
-            {
-              status = ARES_ENOMEM;
-              break;
-            }
+          if (!naptr_curr) {
+            DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+            status = ARES_ENOMEM;
+            break;
+          }
           if (naptr_last)
             {
               naptr_last->next = naptr_curr;

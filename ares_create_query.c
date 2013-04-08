@@ -131,8 +131,10 @@ int ares_create_query(const char *name, int dnsclass, int type,
 
   *buflen = len + HFIXEDSZ + QFIXEDSZ + (max_udp_size ? EDNSFIXEDSZ : 0);
   *buf = malloc(*buflen);
-  if (!*buf)
-      return ARES_ENOMEM;
+  if (!*buf) {
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+    return ARES_ENOMEM;
+  }
 
   /* Set up the header. */
   q = *buf;

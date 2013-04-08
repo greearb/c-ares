@@ -74,19 +74,19 @@ void ares_search(ares_channel channel, const char *name, int dnsclass,
    * doing multiple lookups.
    */
   squery = malloc(sizeof(struct search_query));
-  if (!squery)
-    {
-      callback(arg, ARES_ENOMEM, 0, NULL, 0);
-      return;
-    }
+  if (!squery) {
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+    callback(arg, ARES_ENOMEM, 0, NULL, 0);
+    return;
+  }
   squery->channel = channel;
   squery->name = strdup(name);
-  if (!squery->name)
-    {
-      free(squery);
-      callback(arg, ARES_ENOMEM, 0, NULL, 0);
-      return;
-    }
+  if (!squery->name) {
+    free(squery);
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+    callback(arg, ARES_ENOMEM, 0, NULL, 0);
+    return;
+  }
   squery->dnsclass = dnsclass;
   squery->type = type;
   squery->status_as_is = -1;
@@ -212,8 +212,10 @@ static int cat_domain(const char *name, const char *domain, char **s)
   size_t dlen = strlen(domain);
 
   *s = malloc(nlen + 1 + dlen + 1);
-  if (!*s)
+  if (!*s) {
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
     return ARES_ENOMEM;
+  }
   memcpy(*s, name, nlen);
   (*s)[nlen] = '.';
   memcpy(*s + nlen + 1, domain, dlen);
@@ -239,11 +241,13 @@ static int single_domain(ares_channel channel, const char *name, char **s)
   /* If the name contains a trailing dot, then the single query is the name
    * sans the trailing dot.
    */
-  if (name[len - 1] == '.')
-    {
-      *s = strdup(name);
-      return (*s) ? ARES_SUCCESS : ARES_ENOMEM;
-    }
+  if (name[len - 1] == '.') {
+    *s = strdup(name);
+    if (!*s)
+      DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+    
+    return (*s) ? ARES_SUCCESS : ARES_ENOMEM;
+  }
 
   if (!(channel->flags & ARES_FLAG_NOALIASES) && !strchr(name, '.'))
     {
@@ -276,6 +280,8 @@ static int single_domain(ares_channel channel, const char *name, char **s)
                         }
                       free(line);
                       fclose(fp);
+                      if (!*s)
+                        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
                       return (*s) ? ARES_SUCCESS : ARES_ENOMEM;
                     }
                 }
@@ -304,12 +310,13 @@ static int single_domain(ares_channel channel, const char *name, char **s)
         }
     }
 
-  if (channel->flags & ARES_FLAG_NOSEARCH || channel->ndomains == 0)
-    {
-      /* No domain search to do; just try the name as-is. */
-      *s = strdup(name);
-      return (*s) ? ARES_SUCCESS : ARES_ENOMEM;
-    }
+  if (channel->flags & ARES_FLAG_NOSEARCH || channel->ndomains == 0) {
+    /* No domain search to do; just try the name as-is. */
+    *s = strdup(name);
+    if (!*s)
+      DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+    return (*s) ? ARES_SUCCESS : ARES_ENOMEM;
+  }
 
   *s = NULL;
   return ARES_SUCCESS;

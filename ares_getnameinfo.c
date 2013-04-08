@@ -164,11 +164,11 @@ void ares_getnameinfo(ares_channel channel, const struct sockaddr *sa,
     else
       {
         niquery = malloc(sizeof(struct nameinfo_query));
-        if (!niquery)
-          {
-            callback(arg, ARES_ENOMEM, 0, NULL, NULL);
-            return;
-          }
+        if (!niquery) {
+          DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+          callback(arg, ARES_ENOMEM, 0, NULL, NULL);
+          return;
+        }
         niquery->callback = callback;
         niquery->arg = arg;
         niquery->flags = flags;

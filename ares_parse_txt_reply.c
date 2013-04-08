@@ -112,11 +112,11 @@ ares_parse_txt_reply (const unsigned char *abuf, int alen,
         {
           /* Allocate storage for this TXT answer appending it to the list */
           txt_curr = ares_malloc_data(ARES_DATATYPE_TXT_REPLY);
-          if (!txt_curr)
-            {
-              status = ARES_ENOMEM;
-              break;
-            }
+          if (!txt_curr) {
+            DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+            status = ARES_ENOMEM;
+            break;
+          }
           if (txt_last)
             {
               txt_last->next = txt_curr;
@@ -146,11 +146,11 @@ ares_parse_txt_reply (const unsigned char *abuf, int alen,
 
           /* Including null byte */
           txt_curr->txt = malloc (txt_curr->length + 1);
-          if (txt_curr->txt == NULL)
-            {
-              status = ARES_ENOMEM;
-              break;
-            }
+          if (txt_curr->txt == NULL) {
+            DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+            status = ARES_ENOMEM;
+            break;
+          }
 
           /* Step through the list of substrings, concatenating them */
           str_len = 0;

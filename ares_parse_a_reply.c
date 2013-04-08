@@ -95,18 +95,18 @@ int ares_parse_a_reply(const unsigned char *abuf, int alen,
       /* Allocate addresses and aliases; ancount gives an upper bound for
          both. */
       addrs = malloc(ancount * sizeof(struct in_addr));
-      if (!addrs)
-        {
-          free(hostname);
-          return ARES_ENOMEM;
-        }
+      if (!addrs) {
+        free(hostname);
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+        return ARES_ENOMEM;
+      }
       aliases = malloc((ancount + 1) * sizeof(char *));
-      if (!aliases)
-        {
-          free(hostname);
-          free(addrs);
-          return ARES_ENOMEM;
-        }
+      if (!aliases) {
+        free(hostname);
+        free(addrs);
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+        return ARES_ENOMEM;
+      }
     }
   else
     {
@@ -243,6 +243,7 @@ int ares_parse_a_reply(const unsigned char *abuf, int alen,
                 }
               free(hostent);
             }
+          DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
           status = ARES_ENOMEM;
         }
      }

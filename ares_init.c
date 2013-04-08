@@ -129,6 +129,7 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
   channel = malloc(sizeof(struct ares_channeldata));
   if (!channel) {
     *channelptr = NULL;
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
     return ARES_ENOMEM;
   }
 
@@ -351,8 +352,10 @@ int ares_save_options(ares_channel channel, struct ares_options *options,
     }
     if (ipv4_nservers) {
       options->servers = malloc(ipv4_nservers * sizeof(struct in_addr));
-      if (!options->servers)
+      if (!options->servers) {
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
         return ARES_ENOMEM;
+      }
       for (i = j = 0; i < channel->nservers; i++)
       {
         if (channel->servers[i].addr.family == AF_INET)
@@ -367,15 +370,19 @@ int ares_save_options(ares_channel channel, struct ares_options *options,
   /* copy domains */
   if (channel->ndomains) {
     options->domains = malloc(channel->ndomains * sizeof(char *));
-    if (!options->domains)
+    if (!options->domains) {
+      DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
       return ARES_ENOMEM;
+    }
 
     for (i = 0; i < channel->ndomains; i++)
     {
       options->ndomains = i;
       options->domains[i] = strdup(channel->domains[i]);
-      if (!options->domains[i])
+      if (!options->domains[i]) {
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
         return ARES_ENOMEM;
+      }
     }
   }
   options->ndomains = channel->ndomains;
@@ -383,15 +390,19 @@ int ares_save_options(ares_channel channel, struct ares_options *options,
   /* copy lookups */
   if (channel->lookups) {
     options->lookups = strdup(channel->lookups);
-    if (!options->lookups && channel->lookups)
+    if (!options->lookups && channel->lookups) {
+      DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
       return ARES_ENOMEM;
+    }
   }
 
   /* copy sortlist */
   if (channel->nsort) {
     options->sortlist = malloc(channel->nsort * sizeof(struct apattern));
-    if (!options->sortlist)
+    if (!options->sortlist) {
+      DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
       return ARES_ENOMEM;
+    }
     for (i = 0; i < channel->nsort; i++)
       options->sortlist[i] = channel->sortlist[i];
   }
@@ -446,8 +457,10 @@ static int init_by_options(ares_channel channel,
         {
           channel->servers =
             malloc(options->nservers * sizeof(struct server_state));
-          if (!channel->servers)
+          if (!channel->servers) {
+            DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
             return ARES_ENOMEM;
+          }
           for (i = 0; i < options->nservers; i++)
             {
               channel->servers[i].addr.family = AF_INET;
@@ -468,14 +481,18 @@ static int init_by_options(ares_channel channel,
       if (options->ndomains > 0)
       {
         channel->domains = malloc(options->ndomains * sizeof(char *));
-        if (!channel->domains)
+        if (!channel->domains) {
+          DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
           return ARES_ENOMEM;
+        }
         for (i = 0; i < options->ndomains; i++)
           {
             channel->ndomains = i;
             channel->domains[i] = strdup(options->domains[i]);
-            if (!channel->domains[i])
+            if (!channel->domains[i]) {
+              DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
               return ARES_ENOMEM;
+            }
           }
       }
       channel->ndomains = options->ndomains;
@@ -485,16 +502,20 @@ static int init_by_options(ares_channel channel,
   if ((optmask & ARES_OPT_LOOKUPS) && !channel->lookups)
     {
       channel->lookups = strdup(options->lookups);
-      if (!channel->lookups)
+      if (!channel->lookups) {
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
         return ARES_ENOMEM;
+      }
     }
 
   /* copy sortlist */
   if ((optmask & ARES_OPT_SORTLIST) && (channel->nsort == -1) &&
       (options->nsort>0)) {
     channel->sortlist = malloc(options->nsort * sizeof(struct apattern));
-    if (!channel->sortlist)
+    if (!channel->sortlist) {
+      DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
       return ARES_ENOMEM;
+    }
     for (i = 0; i < options->nsort; i++)
       channel->sortlist[i] = options->sortlist[i];
     channel->nsort = options->nsort;
@@ -1090,8 +1111,10 @@ static int init_by_resolv_conf(ares_channel channel)
   if (line) {
     char *resolvers = strdup(line), *pos, *space;
 
-    if (!resolvers)
+    if (!resolvers) {
+      DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
       return ARES_ENOMEM;
+    }
 
     pos = resolvers;
     do {
@@ -1121,8 +1144,10 @@ static int init_by_resolv_conf(ares_channel channel)
 
   nservers = i;
   servers = calloc(i, sizeof(struct server_state));
-  if (!servers)
-     return ARES_ENOMEM;
+  if (!servers) {
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+    return ARES_ENOMEM;
+  }
 
   for (i = 0; def_nameservers[i]; i++)
   {
@@ -1350,6 +1375,7 @@ static int init_by_defaults(ares_channel channel)
     /* If nobody specified servers, try a local named. */
     channel->servers = malloc(sizeof(struct server_state));
     if (!channel->servers) {
+      DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
       rc = ARES_ENOMEM;
       goto error;
     }
@@ -1381,6 +1407,7 @@ static int init_by_defaults(ares_channel channel)
 
     hostname = malloc(len);
     if(!hostname) {
+      DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
       rc = ARES_ENOMEM;
       goto error;
     }
@@ -1394,6 +1421,7 @@ static int init_by_defaults(ares_channel channel)
         lenv *= 2;
         p = realloc(hostname, len);
         if(!p) {
+          DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
           rc = ARES_ENOMEM;
           goto error;
         }
@@ -1412,11 +1440,13 @@ static int init_by_defaults(ares_channel channel)
       /* a dot was found */
       channel->domains = malloc(sizeof(char *));
       if (!channel->domains) {
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
         rc = ARES_ENOMEM;
         goto error;
       }
       channel->domains[0] = strdup(dot + 1);
       if (!channel->domains[0]) {
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
         rc = ARES_ENOMEM;
         goto error;
       }
@@ -1432,8 +1462,10 @@ static int init_by_defaults(ares_channel channel)
 
   if (!channel->lookups) {
     channel->lookups = strdup("fb");
-    if (!channel->lookups)
+    if (!channel->lookups) {
+      DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
       rc = ARES_ENOMEM;
+    }
   }
 
   error:
@@ -1509,6 +1541,8 @@ static int config_lookup(ares_channel channel, const char *str,
     }
   *l = '\0';
   channel->lookups = strdup(lookups);
+  if (!channel->lookups)
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
   return (channel->lookups) ? ARES_SUCCESS : ARES_ENOMEM;
 }
 #endif  /* !WIN32 & !WATT32 & !ANDROID & !__ANDROID__ */
@@ -1556,8 +1590,10 @@ static int config_nameserver(struct server_state **servers, int *nservers,
       /* Resize servers state array. */
       newserv = realloc(*servers, (*nservers + 1) *
                         sizeof(struct server_state));
-      if (!newserv)
+      if (!newserv) {
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
         return ARES_ENOMEM;
+      }
 
       /* Store address data. */
       newserv[*nservers].addr.family = host.family;
@@ -1615,8 +1651,10 @@ static int config_sortlist(struct apattern **sortlist, int *nsort,
           pat.type = PATTERN_CIDR;
           pat.mask.bits = (unsigned short)bits;
           pat.family = AF_INET6;
-          if (!sortlist_alloc(sortlist, nsort, &pat))
+          if (!sortlist_alloc(sortlist, nsort, &pat)) {
+            DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
             return ARES_ENOMEM;
+          }
         }
       else if (ipbufpfx[0] &&
                (bits = ares_inet_net_pton(AF_INET, ipbufpfx, &pat.addrV4,
@@ -1625,8 +1663,10 @@ static int config_sortlist(struct apattern **sortlist, int *nsort,
           pat.type = PATTERN_CIDR;
           pat.mask.bits = (unsigned short)bits;
           pat.family = AF_INET;
-          if (!sortlist_alloc(sortlist, nsort, &pat))
+          if (!sortlist_alloc(sortlist, nsort, &pat)) {
+            DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
             return ARES_ENOMEM;
+          }
         }
       /* See if it is just a regular IP */
       else if (ip_addr(ipbuf, q-str, &pat.addrV4) == 0)
@@ -1642,8 +1682,10 @@ static int config_sortlist(struct apattern **sortlist, int *nsort,
             natural_mask(&pat);
           pat.family = AF_INET;
           pat.type = PATTERN_MASK;
-          if (!sortlist_alloc(sortlist, nsort, &pat))
+          if (!sortlist_alloc(sortlist, nsort, &pat)) {
+            DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
             return ARES_ENOMEM;
+          }
         }
       else
         {
@@ -1693,8 +1735,10 @@ static int set_search(ares_channel channel, const char *str)
     }
 
   channel->domains = malloc(n * sizeof(char *));
-  if (!channel->domains)
+  if (!channel->domains) {
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
     return ARES_ENOMEM;
+  }
 
   /* Now copy the domains. */
   n = 0;
@@ -1706,8 +1750,10 @@ static int set_search(ares_channel channel, const char *str)
       while (*q && !ISSPACE(*q))
         q++;
       channel->domains[n] = malloc(q - p + 1);
-      if (!channel->domains[n])
+      if (!channel->domains[n]) {
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
         return ARES_ENOMEM;
+      }
       memcpy(channel->domains[n], p, q - p);
       channel->domains[n][q - p] = 0;
       p = q;
@@ -1919,8 +1965,10 @@ static int init_id_key(rc4_key* key,int key_data_len)
   unsigned char *key_data_ptr = 0;
 
   key_data_ptr = calloc(1,key_data_len);
-  if (!key_data_ptr)
+  if (!key_data_ptr) {
+    DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
     return ARES_ENOMEM;
+  }
 
   state = &key->state[0];
   for(counter = 0; counter < 256; counter++)

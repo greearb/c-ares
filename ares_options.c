@@ -44,11 +44,11 @@ int ares_get_servers(ares_channel channel,
     {
       /* Allocate storage for this server node appending it to the list */
       srvr_curr = ares_malloc_data(ARES_DATATYPE_ADDR_NODE);
-      if (!srvr_curr)
-        {
-          status = ARES_ENOMEM;
-          break;
-        }
+      if (!srvr_curr) {
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+        status = ARES_ENOMEM;
+        break;
+      }
       if (srvr_last)
         {
           srvr_last->next = srvr_curr;
@@ -108,10 +108,10 @@ int ares_set_servers(ares_channel channel,
     {
       /* Allocate storage for servers state */
       channel->servers = malloc(num_srvrs * sizeof(struct server_state));
-      if (!channel->servers)
-        {
-          return ARES_ENOMEM;
-        }
+      if (!channel->servers) {
+        DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
+        return ARES_ENOMEM;
+      }
       channel->nservers = num_srvrs;
       /* Fill servers state address data */
       for (i = 0, srvr = servers; srvr; i++, srvr = srvr->next)
@@ -200,6 +200,7 @@ int ares_set_servers_csv(ares_channel channel,
         /* was ipv6, add new server */
         s = malloc(sizeof(*s));
         if (!s) {
+          DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
           rv = ARES_ENOMEM;
           goto out;
         }
@@ -210,6 +211,7 @@ int ares_set_servers_csv(ares_channel channel,
         /* was ipv4, add new server */
         s = malloc(sizeof(*s));
         if (!s) {
+          DEBUGF(printf("%s:%i ENOMEM\n", __FILE__, __LINE__));
           rv = ARES_ENOMEM;
           goto out;
         }
