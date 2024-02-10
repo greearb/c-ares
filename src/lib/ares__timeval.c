@@ -44,7 +44,7 @@ struct timeval ares__tvnow(void)
   return now;
 }
 
-#elif defined(HAVE_CLOCK_GETTIME_MONOTONIC)
+#elif defined(HAVE_CLOCK_GETTIME_MONOTONIC) && !defined(MACOS_10_8_CT)
 
 struct timeval ares__tvnow(void)
 {
