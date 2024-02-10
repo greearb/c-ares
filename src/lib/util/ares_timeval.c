@@ -50,7 +50,7 @@ void ares_tvnow(ares_timeval_t *now)
                              freq.QuadPart);
 }
 
-#elif defined(HAVE_CLOCK_GETTIME_MONOTONIC)
+#elif defined(HAVE_CLOCK_GETTIME_MONOTONIC) && !defined(MACOS_10_8_CT)
 
 void ares_tvnow(ares_timeval_t *now)
 {
