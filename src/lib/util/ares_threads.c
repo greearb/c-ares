@@ -538,7 +538,9 @@ ares_status_t ares_thread_cond_wait(ares_thread_cond_t  *cond,
 
 static void ares_timespec_timeout(struct timespec *ts, size_t add_ms)
 {
-#    if defined(HAVE_CLOCK_GETTIME) && defined(CLOCK_REALTIME)
+#    if defined(HAVE_CLOCK_GETTIME) && defined(CLOCK_REALTIME) && \
+       (!defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || \
+       __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
   clock_gettime(CLOCK_REALTIME, ts);
 #    elif defined(HAVE_GETTIMEOFDAY)
   struct timeval tv;

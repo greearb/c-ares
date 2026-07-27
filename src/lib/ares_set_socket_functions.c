@@ -343,7 +343,10 @@ static int default_aconnect(ares_socket_t sock, const struct sockaddr *address,
   return connect(sock, address, address_len);
 #elif defined(TFO_USE_CONNECTX) && TFO_USE_CONNECTX
   if (flags & ARES_SOCKET_CONN_TCP_FASTOPEN) {
-    sa_endpoints_t endpoints;
+#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
+       return connect(sock, address, address_len);
+#else
+       sa_endpoints_t endpoints;
 
     memset(&endpoints, 0, sizeof(endpoints));
     endpoints.sae_dstaddr    = address;
@@ -352,6 +355,7 @@ static int default_aconnect(ares_socket_t sock, const struct sockaddr *address,
     return connectx(sock, &endpoints, SAE_ASSOCID_ANY,
                     CONNECT_DATA_IDEMPOTENT | CONNECT_RESUME_ON_READ_WRITE,
                     NULL, 0, NULL, NULL);
+#endif
   } else {
     return connect(sock, address, address_len);
   }
